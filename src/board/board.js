@@ -5,8 +5,7 @@ export default class Board extends Component{
     const {squares, handleClick} = this.props
     return (
       <Square value={squares[i]}
-              index={i}
-              handleClick={handleClick}/>
+              handleClick={() => handleClick(i)}/>
     )
   }
 
