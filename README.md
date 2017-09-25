@@ -22,3 +22,5 @@ constructor(props) {
 }
 
 ```
+
+### 数组循环render 列表时要给列表项绑定key

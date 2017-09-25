@@ -53,13 +53,13 @@ export default class Game extends Component{
       if (index === this.state.stepNumber) {
         return (
           <li key={index}>
-            <a href="#" onClick={() => this.jumpTo(index)} style={{color: 'blue', fontSize: '18px'}}>{item.lastStep}</a>
+            <a onClick={() => this.jumpTo(index)} style={{color: 'blue', fontSize: '18px'}}>{item.lastStep}</a>
           </li>
         )
       } else {
         return (
           <li key={index}>
-            <a href="#" onClick={() => this.jumpTo(index)}>{item.lastStep}</a>
+            <a onClick={() => this.jumpTo(index)}>{item.lastStep}</a>
           </li>
         )
       }
