@@ -6,7 +6,8 @@ export default class Game extends Component{
     this.state = {
       history: [
         {
-          squares: Array(9).fill(null)
+          squares: Array(9).fill(null),
+          lastStep: 'Game start'
         }
       ],
       stepNumber: 0,
@@ -19,12 +20,14 @@ export default class Game extends Component{
     const current = history[this.state.stepNumber]
     const squares = current.squares.slice()
 
-    if (squares[i] || calculateWin(squares)) {
+    if (squares[i] || calculateWin(squares).winner) {
       return
     }
     squares[i] = this.state.xisNext ? 'x' : 'o'
+    const step = `${squares[i]} move to (${Math.floor(i / 3) + 1}, ${i % 3 + 1})`
+
     this.setState({
-      history: [...history, {squares: squares}],
+      history: [...history, {squares: squares, lastStep: step}],
       xisNext: !this.state.xisNext,
       stepNumber: history.length
     })
@@ -41,17 +44,25 @@ export default class Game extends Component{
   render() {
     const history = this.state.history.slice(0, this.state.stepNumber + 1)
     const current = history[this.state.stepNumber]
-    const winner = calculateWin(current.squares)
+    const winner = calculateWin(current.squares).winner
+    const winLine = calculateWin(current.squares).winLine
     const status = this.state.xisNext ? 'x' : 'o'
     
     // 操作历史记录链接
     const moves = history.map((item, index) => {
-      const desc = index ? `Move #${index}` : `Game start`
-      return (
-        <li key={index}>
-          <a href="#" onClick={() => this.jumpTo(index)}>{desc}</a>
-        </li>
-      )
+      if (index === this.state.stepNumber) {
+        return (
+          <li key={index}>
+            <a href="#" onClick={() => this.jumpTo(index)} style={{color: 'blue', fontSize: '18px'}}>{item.lastStep}</a>
+          </li>
+        )
+      } else {
+        return (
+          <li key={index}>
+            <a href="#" onClick={() => this.jumpTo(index)}>{item.lastStep}</a>
+          </li>
+        )
+      }
     })
 
     return (
@@ -61,6 +72,7 @@ export default class Game extends Component{
           <p>winner is {winner}</p>
         </div>
         <Board squares={current.squares}
+               winLine={winLine}
                handleClick={this.handleClick}/>
         <div className="game-info">
           <ol>{moves}</ol>
@@ -83,8 +95,8 @@ function calculateWin(squares) {
   for (let i = 0; i< winLines.length; i++) {
     const [a, b, c] = winLines[i]
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a]
+      return {winner: squares[a], winLine: [a, b, c]}
     }
   }
-  return null
+  return {winner: null, winLine: []}
 }
